@@ -15,3 +15,6 @@ Budget: CSS transforms/opacity for moving cards and bounded particles; no 3D run
 
 ## Rules
 Whole 77-card decks scale at one per six players, preserving the existing 2–24 player implementation. Display sorting never alters a deal. Game effects and rules use the same authoritative engine.
+
+## Direct card handling
+Cards lift with pointer capture and track the user's grip. Dropping on the center ellipse or deliberately flicking toward it submits the same validated move as Play. Misses, cancelled gestures and rejected moves return to the original hand slot. Pointer coordinates account for the rotated portrait-phone layout. Horizontal touch swipes on a long hand scroll it; small motions remain taps. Return flight starts at the release position, including pass-and-play seat changes. Reduced motion preserves direct manipulation and uses a short fade for rejection.

@@ -63,3 +63,7 @@ Public engine receipts identify played cards, draw counts and life losses. They 
 Installed PWAs request landscape. On touch devices, starting an offline game also attempts fullscreen and native landscape orientation. Browser support varies, particularly on iOS; a rotated, interactive landscape table provides the fallback. Help dialogs rotate to match. The desktop and phone viewport layouts were browser-checked, including portrait fallback; physical iOS/Android orientation locking still needs device verification. A roster shows all players when more than five opponents cannot fit around the arena.
 
 New image files: `public/assets/arena.webp` and `public/assets/avatars.webp`. Both use built-in OpenAI image generation; final prompts are in `public/assets/arena-prompts.json`. The interface refers to the spatial layout and dramatic action feedback of [UNO Mobile](https://www.letsplayuno.com/); the environment, characters and game identity are original.
+
+### Drag, drop and throw
+
+Drag a hand card onto the lit center of the table to play it. A deliberate fast flick aimed toward the center can release before reaching the table. Taps still select a card for the Play button. Releases away from the table, unsafe cards, interruptions and rejected online moves return the card to its hand. Small twitches do not commit a move. Long hands support horizontal touch swipes for browsing. The same pointer controls account for the CSS-rotated phone layout; keyboard users retain tap/Play controls.
