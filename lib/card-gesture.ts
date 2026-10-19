@@ -4,5 +4,21 @@ export type DropZone={x:number;y:number;rx:number;ry:number};
 export function tablePoint(client:GesturePoint,bounds:{left:number;top:number;right:number},rotated:boolean):GesturePoint{return rotated?{x:client.y-bounds.top,y:bounds.right-client.x}:{x:client.x-bounds.left,y:client.y-bounds.top}}
 export function dropZone(width:number,height:number):DropZone{return {x:width*.5,y:height*.455,rx:width*.38,ry:height*.315}}
 export function isOverTable(point:GesturePoint,zone:DropZone){return ((point.x-zone.x)/zone.rx)**2+((point.y-zone.y)/zone.ry)**2<=1}
-/** A flick must be deliberate, aimed at the table, and physically cross its drop zone. */
-export function acceptsCardRelease(start:GesturePoint,point:GesturePoint,velocity:GesturePoint,zone:DropZone,grip?:GesturePoint){const distance=Math.hypot(point.x-start.x,point.y-start.y);if(distance<10)return false;if(isOverTable(point,zone)||(grip&&isOverTable(grip,zone)))return true;const speed=Math.hypot(velocity.x,velocity.y);if(distance<34||speed<.65)return false;const toward={x:zone.x-point.x,y:zone.y-point.y};const length=Math.hypot(toward.x,toward.y);if(!length||(toward.x*velocity.x+toward.y*velocity.y)/(length*speed)<.72)return false;const projected={x:velocity.x*220,y:velocity.y*220};const ax=(point.x-zone.x)/zone.rx,ay=(point.y-zone.y)/zone.ry,bx=projected.x/zone.rx,by=projected.y/zone.ry;const denominator=bx*bx+by*by;if(!denominator)return false;const t=Math.max(0,Math.min(1,-(ax*bx+ay*by)/denominator));return (ax+t*bx)**2+(ay+t*by)**2<=1}
+/** Keep almost-horizontal swipes for browsing a long hand; lift immediately otherwise. */
+export function cardDragIntent(delta:GesturePoint,scrollable:boolean):'pending'|'scroll'|'drag'{
+ const x=Math.abs(delta.x),y=Math.abs(delta.y);
+ if(Math.hypot(x,y)<5)return 'pending';
+ if(scrollable&&x>y*3&&y<12)return x<12?'pending':'scroll';
+ return 'drag';
+}
+/** A casual toss leaves the hand toward the table. Its landing is automatic. */
+export function acceptsCardRelease(start:GesturePoint,point:GesturePoint,velocity:GesturePoint,zone:DropZone,grip?:GesturePoint){
+ const dx=point.x-start.x,up=start.y-point.y;
+ if(Math.hypot(dx,up)<10)return false;
+ if(isOverTable(point,zone)||(grip&&isOverTable(grip,zone)))return true;
+ const travel=Math.max(16,Math.min(24,zone.ry*.09));
+ // Broad upward intent works even at low speed or when released beside the table.
+ if(up>=travel&&up>=Math.abs(dx)*.15)return true;
+ // Short, quick flicks count too; tiny twitches and sideways/downward swipes do not.
+ return up>=12&&up>=Math.abs(dx)*.15&&velocity.y<=-.22&&-velocity.y>=Math.abs(velocity.x)*.15;
+}

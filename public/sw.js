@@ -1,4 +1,4 @@
-const CACHE='5dead-v5';
+const CACHE='5dead-v6';
 const CORE=['/','/manifest.webmanifest','/favicon.svg','/icon-192.png','/icon-512.png','/assets/card-back.webp','/assets/arena.webp','/assets/avatars.webp','/assets/display.ttf','/assets/body.ttf'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
