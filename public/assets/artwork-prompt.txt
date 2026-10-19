@@ -1,0 +1,5 @@
+Generated with the built-in OpenAI image generation tool, October 19, 2026.
+
+Use case: illustration-story. Asset type: original playing-card back illustration for the offline card game 5 Dead. Draw a wonderfully bold, cool, mischievous cartoon skull with rounded black eye sockets, a friendly grin, tiny four-point stars and three orbiting white lightning bolts, on a perfectly flat warm vermilion coral background #f26350. A premium independent screenprinted card game with thick cream outlines, two-color graphic shapes, restrained black ink details. Entire composition contained inside a centered upright portrait rounded rectangle with a thin cream inset keyline, on matching coral background. Strictly flat front view, full-bleed portrait artwork, no photographed objects, no perspective, no hands, no letters, no numbers, no words, no logos, no shadows. Strong bold contrast at small sizes. The cream skull dominates the center with expressive original illustration. Output portrait 2:3.
+
+The production image is card-back.webp. Numeric and action-card labels are rendered by the app for accurate, accessible rules and numbers.
