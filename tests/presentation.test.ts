@@ -46,3 +46,17 @@ test('diagonal phone lifts throw immediately while flat swipes scroll long hands
  assert.equal(cardDragIntent({x:2,y:-5},true),'drag');
  assert.equal(cardDragIntent({x:20,y:0},false),'drag');
 });
+
+import {cardDesign} from '../lib/card-design.ts';
+import {CARD_INFO,type Kind} from '../lib/game.ts';
+test('special card faces use consistent colors and short, distinct labels',()=>{
+ const labels=new Set<string>();
+ for(const kind of Object.keys(CARD_INFO).filter(k=>k!=='number') as Exclude<Kind,'number'>[]){
+  const visual=cardDesign({id:kind,kind,value:0});
+  assert.equal(visual.color,CARD_INFO[kind].color);
+  assert(visual.label.length<=9,'Labels must fit compact cards');
+  assert(!labels.has(visual.label));labels.add(visual.label);
+ }
+ assert.equal(cardDesign({id:'b',kind:'bomb',value:0}).color,'danger');
+ assert.equal(cardDesign({id:'r',kind:'redeal',value:0}).label,'RESHUFFLE');
+});

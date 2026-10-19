@@ -1,0 +1,45 @@
+/* One face system at every size: index, central mark, then an action label. */
+.playing-card.card-face{
+ container-type:inline-size;isolation:isolate;background:var(--face-color,#2761c7);color:#fffdf6;
+ border:4px solid #fff9eb;border-radius:10px;box-shadow:0 2px 0 #566680;
+ --face-color:#2761c7;
+}
+.card-face.card-palette-red{--face-color:#e63136}
+.card-face.card-palette-orange{--face-color:#ef8519}
+.card-face.card-palette-gold{--face-color:#d4a700}
+.card-face.card-palette-lime{--face-color:#92b516}
+.card-face.card-palette-blue{--face-color:#2862c9}
+.card-face.card-palette-cyan{--face-color:#119ecf}
+.card-face.card-palette-magenta{--face-color:#cf208a}
+.card-face.card-palette-violet{--face-color:#7350c6}
+.card-face.card-palette-danger{--face-color:#c62130}
+.card-face:before{content:'';position:absolute;inset:28% -40% 14%;background:#151923;transform:rotate(-23deg);z-index:-1}
+.card-face:after{content:'';position:absolute;inset:0;background:linear-gradient(140deg,#ffffff18,transparent 46%,#030a1218);pointer-events:none;z-index:-1}
+.card-face .card-corner{position:absolute;left:7%;top:4%;font-family:Barlow,sans-serif;font-size:22cqi;font-weight:800;line-height:1;letter-spacing:-.025em;color:#fffdf6;text-shadow:0 1px 1px #10182755;z-index:2;display:grid;place-items:center}
+.card-face .card-corner>span{line-height:1}
+.card-face .card-corner>svg{width:23cqi;height:23cqi;stroke-width:2.7}
+.card-face .card-corner.bottom{top:auto;left:auto;right:7%;bottom:4%;font-size:22cqi;transform:rotate(180deg)}
+.card-face.card-set21 .card-corner,.card-face.card-set10 .card-corner{font-size:19cqi}
+.card-face .card-core{position:absolute;inset:25% 8% 27%;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);place-items:center;border:0;border-radius:0;background:none;box-shadow:none;transform:none;overflow:visible}
+.card-face.card-number .card-core{inset:21% 8% 20%}
+.card-face .card-core>.card-value{font-family:Barlow,sans-serif;font-weight:800;line-height:.9;letter-spacing:-.025em;text-shadow:0 2px 1px #080d1740;transform:none;white-space:nowrap;color:#fffdf6}
+.card-face .card-core>.card-value-number{font-size:76cqi}
+.card-face .card-core>.card-value-set{font-size:52cqi;letter-spacing:-.03em}
+.card-face .card-core>.card-symbol{width:74cqi;height:74cqi;max-width:100%;max-height:100%;transform:none;stroke-width:3;filter:drop-shadow(0 2px 1px #060b1640);overflow:visible}
+.card-face .card-core>.bomb-symbol{width:76cqi;height:83cqi;max-height:100%}
+.bomb-symbol .bomb-blast{fill:#ffda45;stroke:#ff873e;stroke-width:1.5}
+.card-face .card-name{position:absolute;inset:auto 6% 7%;min-height:13%;display:grid;place-items:center;padding:2% 0;background:#10131be6;border-radius:3px;font-family:Barlow,sans-serif;font-size:13cqi;line-height:1;font-weight:800;letter-spacing:.045em;color:#fffdf6;text-align:center;white-space:nowrap}
+.card-face.card-bomb{background:#161922;border-color:#ffd65c;box-shadow:0 2px 0 #8b4930}
+.card-face.card-bomb:before{inset:-20% -50% 53%;background:#d32936;transform:rotate(-23deg)}
+.card-face.card-bomb .card-name{background:#d32936;color:#fff8cc}
+.card-face.card-bomb .card-corner{color:#ffe67d}
+.card-face.card-redeal .card-name{color:#ffdef2}
+.rules-cards .card-face{width:70px;height:104px;border-width:3px;border-radius:8px;flex:none}
+.rules-cards>div>span{min-width:0}
+.rules .rare-cards-note{font-size:13px;color:#c7bdcf;margin-bottom:22px}
+@container (max-width:55px){
+ .card-face .card-name,.card-face .card-corner{display:none}
+ .card-face .card-core{inset:12% 8%}
+}
+.card-face.card-bomb .card-core{inset:22% 9% 32%}
+.card-face.card-bomb .card-core>.bomb-symbol{width:100%;height:100%;max-height:100%}

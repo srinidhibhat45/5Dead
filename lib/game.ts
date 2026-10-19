@@ -4,17 +4,17 @@ export type Player = {id:string;name:string;bot:boolean;lives:number;hand:Card[]
 export type GameEvent = {id:string;revision:number;actorId:string;actorName:string;action:Kind|'bust';type:'play'|'round'|'win';card?:Card;total:number;losses:{id:string;name:string;amount:number;out:boolean}[];draws:{id:string;name:string;count:number}[];winners:string[]};
 export type Game = {events?:GameEvent[];players:Player[];deck:Card[];discard:Card[];turn:number;direction:number;total:number;round:number;phase:'playing'|'finished';winners:string[];log:string[];variant:'classic'|'sudden'|'teams';decks:number;revision:number};
 export const CARD_INFO:Record<Kind,{label:string;symbol:string;detail:string;color:string}>={
-number:{label:'Number',symbol:'',detail:'Add this number to the total.',color:'yellow'},
-draw1:{label:'Draw one',symbol:'+1',detail:'Every other player draws one. Total stays.',color:'purple'},
-draw2:{label:'Draw two',symbol:'+2',detail:'Every other player draws two. Total stays.',color:'purple'},
-pass:{label:'Pass',symbol:'→',detail:'Pass your turn. Total stays.',color:'teal'},
-reverse:{label:'Reverse',symbol:'⇄',detail:'Reverse direction. With two players, pass.',color:'coral'},
-skip:{label:'Skip',symbol:'⊘',detail:'Skip the next player.',color:'yellow'},
-set21:{label:'Set to 21',symbol:'=21',detail:'Set the total to 21.',color:'coral'},
-set10:{label:'Set to 10',symbol:'=10',detail:'Set the total to 10.',color:'purple'},
-set0:{label:'Reset',symbol:'=0',detail:'Reset the total to zero.',color:'teal'},
-redeal:{label:'Re-deal',symbol:'⇆',detail:'Shuffle and re-deal all active hands. Reset to zero.',color:'purple'},
-bomb:{label:'Bomb',symbol:'',detail:'Others discard a number zero or lose a life. Reset to zero.',color:'coral'}};
+number:{label:'Number',symbol:'',detail:'Add this number to the total.',color:'gold'},
+draw1:{label:'Draw one',symbol:'+1',detail:'Every other player draws one. Total stays.',color:'blue'},
+draw2:{label:'Draw two',symbol:'+2',detail:'Every other player draws two. Total stays.',color:'cyan'},
+pass:{label:'Pass',symbol:'→',detail:'Pass your turn. Total stays.',color:'magenta'},
+reverse:{label:'Reverse',symbol:'⇄',detail:'Reverse direction. With two players, pass.',color:'orange'},
+skip:{label:'Skip',symbol:'⊘',detail:'Skip the next player.',color:'violet'},
+set21:{label:'Set to 21',symbol:'=21',detail:'Set the total to 21.',color:'red'},
+set10:{label:'Set to 10',symbol:'=10',detail:'Set the total to 10.',color:'cyan'},
+set0:{label:'Reset',symbol:'=0',detail:'Reset the total to zero.',color:'lime'},
+redeal:{label:'Reshuffle',symbol:'⇆',detail:'Shuffle and re-deal all active hands. Reset to zero.',color:'magenta'},
+bomb:{label:'Bomb',symbol:'',detail:'Others discard a number zero or lose a life. Reset to zero.',color:'danger'}};
 export function randomInt(n:number){if(!Number.isSafeInteger(n)||n<1||n>2**32)throw Error('Invalid random range');const a=new Uint32Array(1);const limit=Math.floor(2**32/n)*n;do{crypto.getRandomValues(a)}while(a[0]>=limit);return a[0]%n}
 export function shuffle<T>(items:T[]){const a=[...items];for(let i=a.length-1;i>0;i--){const j=randomInt(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
 export function makeDeck(copies=1):Card[]{const out:Card[]=[];for(let d=0;d<copies;d++){const add=(kind:Kind,value:number,count:number)=>{for(let i=0;i<count;i++)out.push({id:`${d}-${kind}-${value}-${i}`,kind,value})};[8,8,8,8,8,4,2,1].forEach((n,v)=>add('number',v,n));const counts:Partial<Record<Kind,number>>={draw1:2,draw2:2,pass:4,reverse:6,skip:4,set21:5,set10:2,set0:3,redeal:1,bomb:1};for(const [k,n] of Object.entries(counts))add(k as Kind,0,n!)}return shuffle(out)}

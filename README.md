@@ -70,3 +70,6 @@ Toss a hand card upward and release to play it: short, broad gestures work befor
 
 ### Phone ergonomics
 Phone layouts use 48px icon targets, 52–56px primary actions and inputs, and 16px form text. Landscape hands keep cards 80–98px wide with at least 52px exposed between adjacent cards; longer hands scroll. Container queries share the same layout between native landscape and the rotated portrait fallback, including safe areas. Short landscape viewports condense far opponents without shrinking the controls. Browser QA covered 320px, 384px and 412px portrait widths, rotated gameplay, 915×412 landscape, and 915×320 with browser-toolbar space deducted. Physical S24 Ultra testing remains unverified.
+
+### Card faces and rare cards
+Card artwork uses a single size-aware vector face system in `components/playing-card.tsx` and `app/cards.css`. The printed set’s color cues inform the palette; Bomb has a charcoal/red face, gold border and fuse blast, while Reshuffle has a magenta card-stack/circular-arrow mark. Special-card labels occupy their own footer and set-value typography is sized separately from single digits. The How to Play guide renders the same component as the hand and discard pile. Bomb and Reshuffle each remain one per 77-card base deck, checked across every supported player count. No deal bias or guaranteed rare-card placement is introduced.

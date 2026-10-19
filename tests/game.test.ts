@@ -19,3 +19,14 @@ test('cryptographic integer is in range and shuffles are independent',()=>{for(c
 test('simulated complete games stay valid for every supported size and variant',()=>{for(const n of [2,3,4,6,7,8,12,13,18,19,24])for(const variant of ['classic','sudden','teams'] as Game['variant'][]){if(variant==='teams'&&(n<4||n%2))continue;for(let sample=0;sample<3;sample++){let g=createGame(players(n),variant);let turns=0;while(g.phase==='playing'&&turns<15000){const p=g.players[g.turn];assert(p.lives>0);const id=botChoice(p.hand,g.total);if(id)assert(playable(p.hand.find(c=>c.id===id)!,g.total));g=play(g,p.id,id);assert(g.total>=0&&g.total<=21);assert(g.players.every(p=>p.lives>=0&&p.lives<=5));const all=[...g.deck,...g.discard,...g.players.flatMap(p=>p.hand)];assert.equal(new Set(all.map(c=>c.id)).size,all.length);assert.equal(all.length,77*g.decks);turns++}assert.equal(g.phase,'finished',`${n} ${variant} stalled at ${turns}`)}}});
 test('animation receipts expose played cards and counts without revealing private draws',()=>{let g=rig();g.players[0].hand[0]=card('draw2');const played=g.players[0].hand[0];g=play(g,'p0',played.id);const event=g.events!.at(-1)!;assert.equal(event.action,'draw2');assert.equal(event.actorId,'p0');assert.equal(event.draws.length,2);assert(event.draws.every(x=>x.count===2));assert.equal(event.card!.id,played.id);const receipt=JSON.stringify(event);for(const p of g.players.slice(1))for(const hidden of p.hand)assert(!receipt.includes(hidden.id));assert.deepEqual(publicGame(g,'p1').events,g.events)});
 test('final-card and bust receipts retain the true action across hand resets',()=>{let g=rig();g.players[0].hand=[card('bomb')];const final=g.players[0].hand[0];g=play(g,'p0',final.id);assert.equal(g.events!.at(-1)!.type,'round');assert.equal(g.events!.at(-1)!.card!.id,final.id);assert.equal(g.events!.at(-1)!.losses.length,2);g.turn=1;g.total=21;g.players[1].hand=[card('number',7)];g=play(g,'p1');assert.equal(g.events!.at(-1)!.action,'bust');assert.equal(g.events!.at(-1)!.losses[0].id,'p1');assert.equal(g.events!.at(-1)!.total,0)});
+
+test('Bomb and Reshuffle are present once per scaled deck, in hands or the draw pile',()=>{
+ for(let n=2;n<=24;n++){
+  const g=createGame(players(n)),all=[...g.deck,...g.players.flatMap(p=>p.hand)];
+  for(const kind of ['redeal','bomb'] as const){
+   const rare=all.filter(c=>c.kind===kind);
+   assert.equal(rare.length,Math.ceil(n/6));
+   assert.equal(new Set(rare.map(c=>c.id)).size,rare.length);
+  }
+ }
+});
