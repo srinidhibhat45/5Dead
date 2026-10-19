@@ -14,3 +14,6 @@ Name: 5 Dead. User confirmed a playful dark tabletop, bold original AI card artw
 Framework and hosting selected to support server-authoritative online rooms and offline caching. Party implementation supports 2–24 players; larger counts remain an explicitly unverified extension.
 ## Product Principles
 Play first. Keep hands private. Apply the same rules and random distribution to everyone. Explain party rules openly. Do not imply affiliation with Hasbro.
+
+## October 19 presentation update
+User explicitly requested an UNO Mobile-inspired interface with bold graphics, meaningful game animations, sound effects, descending hand sorting, and landscape phone play. Keep the existing rules, privacy, offline play, and larger-group fairness. The latest visual request supersedes the first release's restrained game table.

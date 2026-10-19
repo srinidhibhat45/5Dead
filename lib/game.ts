@@ -1,7 +1,8 @@
 export type Kind = 'number'|'draw1'|'draw2'|'pass'|'reverse'|'skip'|'set21'|'set10'|'set0'|'redeal'|'bomb';
 export type Card = {id:string;kind:Kind;value:number};
 export type Player = {id:string;name:string;bot:boolean;lives:number;hand:Card[];team:number};
-export type Game = {players:Player[];deck:Card[];discard:Card[];turn:number;direction:number;total:number;round:number;phase:'playing'|'finished';winners:string[];log:string[];variant:'classic'|'sudden'|'teams';decks:number;revision:number};
+export type GameEvent = {id:string;revision:number;actorId:string;actorName:string;action:Kind|'bust';type:'play'|'round'|'win';card?:Card;total:number;losses:{id:string;name:string;amount:number;out:boolean}[];draws:{id:string;name:string;count:number}[];winners:string[]};
+export type Game = {events?:GameEvent[];players:Player[];deck:Card[];discard:Card[];turn:number;direction:number;total:number;round:number;phase:'playing'|'finished';winners:string[];log:string[];variant:'classic'|'sudden'|'teams';decks:number;revision:number};
 export const CARD_INFO:Record<Kind,{label:string;symbol:string;detail:string;color:string}>={
 number:{label:'Number',symbol:'',detail:'Add this number to the total.',color:'yellow'},
 draw1:{label:'Draw one',symbol:'+1',detail:'Every other player draws one. Total stays.',color:'purple'},
@@ -26,7 +27,7 @@ function deal(g:Game,starter:number){g.deck=makeDeck(g.decks);g.discard=[];g.tot
 export function createGame(names:{name:string;id?:string;bot?:boolean}[],variant:Game['variant']='classic'):Game{if(names.length<2||names.length>24)throw Error('Choose 2–24 players.');if(variant==='teams'&&(names.length<4||names.length%2))throw Error('Teams need an even number of 4–24 players.');const g:Game={players:names.map((p,i)=>({id:p.id??crypto.randomUUID(),name:p.name.trim().slice(0,20)||`Player ${i+1}`,bot:!!p.bot,lives:5,hand:[],team:i%2})),deck:[],discard:[],turn:0,direction:1,total:0,round:0,phase:'playing',winners:[],log:[],variant,decks:Math.ceil(names.length/6),revision:0};deal(g,randomInt(names.length));return g}
 export function playable(c:Card,total:number){return c.kind!=='number'||c.value+total<=21}
 function draw(g:Game,p:Player){if(!g.deck.length){const top=g.discard.pop();g.deck=shuffle(g.discard);g.discard=top?[top]:[]}if(g.deck.length)p.hand.push(g.deck.pop()!);else note(g,'Draw pile empty: all remaining cards are in hands.')}
-export function play(g:Game,playerId:string,cardId?:string):Game{if(g.phase!=='playing')throw Error('This game is finished.');const p=g.players[g.turn];if(p.id!==playerId)throw Error('Wait for your turn.');const h=p.hand;const legal=h.filter(c=>playable(c,g.total));g=structuredClone(g);const actor=g.players[g.turn];const oldTurn=g.turn;
+function applyPlay(g:Game,playerId:string,cardId?:string):Game{if(g.phase!=='playing')throw Error('This game is finished.');const p=g.players[g.turn];if(p.id!==playerId)throw Error('Wait for your turn.');const h=p.hand;const legal=h.filter(c=>playable(c,g.total));g=structuredClone(g);const actor=g.players[g.turn];const oldTurn=g.turn;
 if(!cardId){if(legal.length)throw Error('You have a playable card.');lose(g,actor);g.total=0;if(!actor.lives){g.discard.push(...actor.hand);actor.hand=[]}if(!end(g))g.turn=next(g,oldTurn);g.revision++;return g}
 const index=actor.hand.findIndex(c=>c.id===cardId);if(index<0)throw Error('That card is not in your hand.');const c=actor.hand[index];if(!playable(c,g.total))throw Error('That card would exceed 21.');actor.hand.splice(index,1);g.discard.push(c);note(g,`${actor.name} played ${c.kind==='number'?c.value:CARD_INFO[c.kind].label}.`);
 // A final card ends the hand before its wild effect is applied.
@@ -44,3 +45,13 @@ if(!end(g)){const empty=alive(g).find(x=>!x.hand.length);if(empty){const others=
 // A bot is handed only its own cards and the public running total.
 export function botChoice(hand:Card[],total:number){const legal=hand.filter(c=>playable(c,total));if(!legal.length)return undefined;const nums=legal.filter(c=>c.kind==='number');if(nums.length&&randomInt(4)!==0)return nums.sort((a,b)=>b.value-a.value)[0].id;return legal[randomInt(legal.length)].id}
 export function publicGame(g:Game,id:string){return {...g,deck:[],players:g.players.map(p=>({...p,count:p.hand.length,hand:p.id===id?p.hand:[]})),discard:g.discard.slice(-1)}}
+
+// Public animation receipts contain played cards and counts, never draw-pile order or private draws.
+export function play(before:Game,playerId:string,cardId?:string):Game{
+ const actor=before.players[before.turn];
+ const card=actor.hand.find(c=>c.id===cardId);
+ const after=applyPlay(before,playerId,cardId);
+ const event:GameEvent={id:crypto.randomUUID(),revision:after.revision,actorId:actor.id,actorName:actor.name,action:card?.kind??'bust',type:after.phase==='finished'?'win':after.round!==before.round?'round':'play',...(card?{card}:{}),total:after.total,losses:[],draws:[],winners:after.winners};
+ for(const p of after.players){const prev=before.players.find(x=>x.id===p.id)!;if(p.lives<prev.lives)event.losses.push({id:p.id,name:p.name,amount:prev.lives-p.lives,out:p.lives===0});if(after.round===before.round&&p.hand.length>prev.hand.length)event.draws.push({id:p.id,name:p.name,count:p.hand.length-prev.hand.length})}
+ after.events=[...(before.events??[]),event].slice(-12);return after;
+}

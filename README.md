@@ -53,3 +53,13 @@ The room integration test requires the local server and migrated database. It cr
 ## Art
 
 `public/assets/card-back.webp` was generated with the built-in OpenAI image generation tool. The final prompt is in `public/assets/artwork-prompt.txt`. All number and action labels are deterministic HTML for legibility and correctness. Barlow Condensed and DM Sans are self-hosted Google Fonts. This project is independent and is not affiliated with or endorsed by Hasbro.
+
+## Animated arena (v2)
+
+The table now uses an original AI midnight arena and six character portraits, glossy color cards, an overlapping sorted hand, and event-driven action sequences. Number cards display from 7 down to 0; wild cards follow in a fixed action order. This changes presentation only, never the deal or bot knowledge.
+
+Public engine receipts identify played cards, draw counts and life losses. They exclude private draws and are retained for the last twelve actions so online clients can sequence effects. Deal, throw, draw, reverse, skip, reset, bomb, life-loss, hand-clear and victory cues have distinct synthesized audio. Sound starts after a user gesture, can be muted persistently, and stays quiet while the page is hidden. Reduced-motion mode keeps short text/color feedback and removes spatial effects.
+
+Installed PWAs request landscape. On touch devices, starting an offline game also attempts fullscreen and native landscape orientation. Browser support varies, particularly on iOS; a rotated, interactive landscape table provides the fallback. Help dialogs rotate to match. The desktop and phone viewport layouts were browser-checked, including portrait fallback; physical iOS/Android orientation locking still needs device verification. A roster shows all players when more than five opponents cannot fit around the arena.
+
+New image files: `public/assets/arena.webp` and `public/assets/avatars.webp`. Both use built-in OpenAI image generation; final prompts are in `public/assets/arena-prompts.json`. The interface refers to the spatial layout and dramatic action feedback of [UNO Mobile](https://www.letsplayuno.com/); the environment, characters and game identity are original.
