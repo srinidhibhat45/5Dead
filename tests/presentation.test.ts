@@ -60,3 +60,18 @@ test('special card faces use consistent colors and short, distinct labels',()=>{
  assert.equal(cardDesign({id:'b',kind:'bomb',value:0}).color,'danger');
  assert.equal(cardDesign({id:'r',kind:'redeal',value:0}).label,'RESHUFFLE');
 });
+
+import {handLayout} from '../lib/hand-layout.ts';
+test('hand fits every selectable card inside phone and desktop trays as counts change',()=>{
+ for(const [width,height] of [[689,412],[514,360],[598,320],[908,800]]){
+  for(const count of [0,1,5,10,12,16,24,40,77]){
+   const layout=handLayout(count,width,height);
+   if(!layout.grid){assert(layout.width+(count-1)*layout.step<=width-32+.01);if(count>1)assert(layout.step>=44)}
+   else {assert(layout.columns*layout.width+(layout.columns-1)*8<=width-32);assert(layout.width>=44);assert(layout.rows<=2)}
+  }
+ }
+});
+test('a hand shrinks under pressure and grows again after cards are played',()=>{
+ const small=handLayout(5,689,412),normal=handLayout(10,689,412),crowded=handLayout(16,689,412);
+ assert(small.width>=normal.width);assert(crowded.width<normal.width);assert(crowded.grid);assert(!small.grid);
+});
